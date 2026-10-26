@@ -1,0 +1,27 @@
+name = "discord-vote-bot"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+
+# 每 10 分鐘補關一次逾期投票（主要靠 Durable Object alarm 準時截止，這是保險）
+[triggers]
+crons = ["*/10 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "discord-vote-bot"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "POLL_DO"
+class_name = "PollDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["PollDO"]
+
+# Secrets（用 `wrangler secret put <NAME>` 設定，不要寫在這裡）：
+#   DISCORD_PUBLIC_KEY   Developer Portal > General Information > Public Key
+#   DISCORD_TOKEN        Developer Portal > Bot > Token
+#   GOOGLE_SA_EMAIL      （選用）Google Sheets 匯出用 service account email
+#   GOOGLE_SA_KEY        （選用）service account 的 private_key（PEM）
